@@ -25,14 +25,22 @@ final class SelectionService: ObservableObject {
     }
 
     func canSelect(assetMediaModel: AssetMediaModel) -> Bool {
-        fitsSelectionLimit || selected.contains(assetMediaModel)
+        // When limit is 1, always allow selection (we support replacement)
+        if mediaSelectionLimit == 1 {
+            return true
+        }
+        return fitsSelectionLimit || selected.contains(assetMediaModel)
     }
 
     func onSelect(assetMediaModel: AssetMediaModel) {
         if let index = selected.firstIndex(of: assetMediaModel) {
             selected.remove(at: index)
         } else {
-            if fitsSelectionLimit {
+            // When limit is 1, replace the existing selection instead of blocking
+            if mediaSelectionLimit == 1 && !selected.isEmpty {
+                selected.removeAll()
+                selected.append(assetMediaModel)
+            } else if fitsSelectionLimit {
                 selected.append(assetMediaModel)
             }
         }

@@ -11,10 +11,10 @@ final public class SelectionParamsHolder: ObservableObject {
 
     @Published public var mediaType: MediaSelectionType = .photoAndVideo
     @Published public var selectionStyle: MediaSelectionStyle = .checkmark
-    @Published public var selectionLimit: Int? // if nil - unlimited
-    @Published public var showFullscreenPreview: Bool = true // if false, tap on image immediately selects this image and closes the picker
+    @Published public var selectionLimit: Int? = 1 // if nil - unlimited
+    @Published public var showFullscreenPreview: Bool = false // if false, tap on image immediately selects this image and closes the picker
 
-    public init(mediaType: MediaSelectionType = .photoAndVideo, selectionStyle: MediaSelectionStyle = .checkmark, selectionLimit: Int? = nil, showFullscreenPreview: Bool = true) {
+    public init(mediaType: MediaSelectionType = .photoAndVideo, selectionStyle: MediaSelectionStyle = .checkmark, selectionLimit: Int? = 1, showFullscreenPreview: Bool = false) {
         self.mediaType = mediaType
         self.selectionStyle = selectionStyle
         self.selectionLimit = selectionLimit

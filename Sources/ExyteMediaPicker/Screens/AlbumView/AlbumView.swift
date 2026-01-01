@@ -156,14 +156,11 @@ struct AlbumView: View {
         .buttonStyle(MediaButtonStyle())
         .contentShape(Rectangle())
 
-        if selectionService.mediaSelectionLimit == 1 {
+        // Always show selection circle for better UX
+        SelectableView(selected: selectionService.index(of: assetMediaModel), isFullscreen: false, canSelect: selectionService.canSelect(assetMediaModel: assetMediaModel), selectionParamsHolder: selectionParamsHolder) {
+            selectionService.onSelect(assetMediaModel: assetMediaModel)
+        } content: {
             imageButton
-        } else {
-            SelectableView(selected: selectionService.index(of: assetMediaModel), isFullscreen: false, canSelect: selectionService.canSelect(assetMediaModel: assetMediaModel), selectionParamsHolder: selectionParamsHolder) {
-                selectionService.onSelect(assetMediaModel: assetMediaModel)
-            } content: {
-                imageButton
-            }
         }
     }
 }
