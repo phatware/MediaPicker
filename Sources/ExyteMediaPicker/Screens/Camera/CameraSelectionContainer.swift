@@ -1,6 +1,6 @@
 //
 //  CameraSelectionContainer.swift
-//  
+//
 //
 //  Created by Alisa Mylnikova on 12.07.2022.
 //
@@ -76,18 +76,25 @@ struct DefaultCameraSelectionContainer: View {
         CameraSelectionView(selectionParamsHolder: selectionParamsHolder)
             .background(theme.main.cameraSelectionBackground)
             .overlay(alignment: .topLeading) {
-                Button("Cancel") {
-                    viewModel.onCancelCameraSelection(cameraSelectionService.hasSelected)
+                Button("Close") {
+                    cameraSelectionService.removeAll()
+                    showingPicker = false
                 }
                 .foregroundColor(theme.main.cameraText)
-                .padding(12, 18)
+                .font(.system(size: 18, weight: .semibold))
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
             }
             .overlay(alignment: .bottom) {
                 HStack {
+                    Button("Retake") {
+                        cameraSelectionService.removeAll()
+                        viewModel.setPickerMode(.camera)
+                    }
+                    Spacer()
                     Button("Done") {
                         showingPicker = false
                     }
-                    Spacer()
                     if selectionParamsHolder.selectionLimit != 1 {
                         Button {
                             viewModel.setPickerMode(.camera)
@@ -99,8 +106,10 @@ struct DefaultCameraSelectionContainer: View {
                     }
                 }
                 .foregroundColor(theme.main.cameraText)
-                .font(.system(size: 16))
-                .padding()
+                .font(.subheadline)
+                .padding(.horizontal, 24)
+                .padding(.top, 14)
+                .padding(.bottom, 24)
             }
     }
 }

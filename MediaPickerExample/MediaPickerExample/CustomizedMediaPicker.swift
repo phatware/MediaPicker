@@ -37,7 +37,7 @@ struct CustomizedMediaPicker: View {
                 }
                 .background(Color.black)
             },
-            cameraSelectionBuilder: { addMoreClosure, cancelClosure, cameraSelectionView in
+            cameraSelectionBuilder: { addMoreClosure, discardClosure, cameraSelectionView in
                 VStack {
                     HStack {
                         Spacer()
@@ -46,7 +46,7 @@ struct CustomizedMediaPicker: View {
                     .padding()
                     cameraSelectionView
                     HStack {
-                        Button("Cancel", action: cancelClosure)
+                        Button("Cancel", action: discardClosure)
                         Spacer()
                         Button(action: addMoreClosure) {
                             Text("Take more photos")

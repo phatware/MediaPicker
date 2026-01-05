@@ -14,7 +14,7 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
 
     /// To provide custom buttons layout for camera selection view use actions and views provided by this closure:
     /// - add more photos closure
-    /// - cancel closure
+    /// - discard/retake closure (clears captured media)
     /// - selection view you can embed in your view
     public typealias CameraSelectionClosure = ((@escaping SimpleClosure, @escaping SimpleClosure, CameraSelectionView) -> CameraSelectionContent)
 
@@ -117,7 +117,7 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
 
             selectionService.onChange = onChange
             selectionService.mediaSelectionLimit = selectionParamsHolder.selectionLimit
-            
+
             cameraSelectionService.onChange = onChange
             cameraSelectionService.mediaSelectionLimit = selectionParamsHolder.selectionLimit
 
@@ -137,7 +137,7 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
         .onChange(of: viewModel.internalPickerMode) { _ , newValue in
             internalPickerMode = newValue
         }
-        .onChange(of: currentFullscreenMedia) { 
+        .onChange(of: currentFullscreenMedia) {
             _currentFullscreenMediaBinding.wrappedValue = currentFullscreenMedia
         }
         .onAppear {
@@ -170,7 +170,10 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
             if let cameraSelectionBuilder = cameraSelectionBuilder {
                 cameraSelectionBuilder(
                     { viewModel.setPickerMode(.camera) }, // add more
-                    { viewModel.onCancelCameraSelection(cameraSelectionService.hasSelected) }, // cancel
+                    {
+                        cameraSelectionService.removeAll()
+                        viewModel.setPickerMode(.camera)
+                    }, // discard / retake
                     CameraSelectionView(selectionParamsHolder: selectionParamsHolder)
                 )
             } else {
@@ -180,9 +183,6 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
                     selectionParamsHolder: selectionParamsHolder
                 )
             }
-        }
-        .confirmationDialog("", isPresented: $viewModel.showingExitCameraConfirmation, titleVisibility: .hidden) {
-            deleteAllButton
         }
     }
 
@@ -215,9 +215,6 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
                         viewModel.setPickerMode(.photos)
                     }
                 }
-                .confirmationDialog("", isPresented: $viewModel.showingExitCameraConfirmation, titleVisibility: .hidden) {
-                    deleteAllButton
-                }
             }
         }
         .onAppear {
@@ -225,14 +222,6 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
         }
         .onDisappear {
             orientationHandler(.unlock)
-        }
-    }
-
-    var deleteAllButton: some View {
-        Button("Delete All") {
-            cameraSelectionService.removeAll()
-            viewModel.setPickerMode(.photos)
-            onChange(selectionService.mapToMedia())
         }
     }
 
@@ -360,7 +349,7 @@ public extension MediaPicker {
         mediaPicker.mediaPickerParamsHolder = params
         return mediaPicker
     }
-    
+
     func setSelectionParameters(_ params: SelectionParamsHolder?) -> MediaPicker {
         guard let params = params else {
             return self
