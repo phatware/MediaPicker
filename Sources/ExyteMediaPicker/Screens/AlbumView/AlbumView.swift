@@ -159,6 +159,10 @@ struct AlbumView: View {
         // Always show selection circle for better UX
         SelectableView(selected: selectionService.index(of: assetMediaModel), isFullscreen: false, canSelect: selectionService.canSelect(assetMediaModel: assetMediaModel), selectionParamsHolder: selectionParamsHolder) {
             selectionService.onSelect(assetMediaModel: assetMediaModel)
+            // Dismiss picker when selection button is tapped in single-selection mode
+            if !selectionParamsHolder.showFullscreenPreview && selectionService.mediaSelectionLimit == 1 {
+                dismiss()
+            }
         } content: {
             imageButton
         }
