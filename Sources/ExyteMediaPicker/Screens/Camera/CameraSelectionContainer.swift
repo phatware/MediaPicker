@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 public struct CameraSelectionView: View {
 
     @EnvironmentObject private var cameraSelectionService: CameraSelectionService
@@ -72,6 +76,14 @@ struct DefaultCameraSelectionContainer: View {
     @Binding var showingPicker: Bool
     var selectionParamsHolder: SelectionParamsHolder
 
+    private var isPad: Bool {
+#if canImport(UIKit)
+        UIDevice.current.userInterfaceIdiom == .pad
+#else
+        false
+#endif
+    }
+
     var body: some View {
         CameraSelectionView(selectionParamsHolder: selectionParamsHolder)
             .background(theme.main.cameraSelectionBackground)
@@ -82,7 +94,8 @@ struct DefaultCameraSelectionContainer: View {
                 }
                 .foregroundColor(theme.main.cameraText)
                 .font(.system(size: 18, weight: .semibold))
-                .padding(.horizontal, 24)
+                .padding(.leading, isPad ? 92 : 24)
+                .padding(.trailing, 24)
                 .padding(.vertical, 16)
             }
             .overlay(alignment: .bottom) {
