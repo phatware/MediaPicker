@@ -1,6 +1,6 @@
 //
 //  CameraViewModel.swift
-//  
+//
 //
 //  Created by Alexandra Afonasova on 18.10.2022.
 //
@@ -158,6 +158,7 @@ final actor CameraViewModel: NSObject, ObservableObject {
     }
 
     private func configureSession() {
+        captureSession.automaticallyConfiguresApplicationAudioSession = false
         captureSession.beginConfiguration()
         captureSession.sessionPreset = .photo
         addInput(to: captureSession)
@@ -175,13 +176,7 @@ final actor CameraViewModel: NSObject, ObservableObject {
         guard session.canAddInput(captureDeviceInput) else { return }
         session.addInput(captureDeviceInput)
 
-        let hasAudioInput = session.inputs.contains { ($0 as? AVCaptureDeviceInput)?.device.hasMediaType(.audio) == true }
-        if !hasAudioInput {
-            guard let captureAudioDevice = selectAudioCaptureDevice() else { return }
-            guard let captureAudioDeviceInput = try? AVCaptureDeviceInput(device: captureAudioDevice) else { return }
-            guard session.canAddInput(captureAudioDeviceInput) else { return }
-            session.addInput(captureAudioDeviceInput)
-        }
+        // Audio/microphone input removed to prevent interrupting other audio/video playback
 
         let defaultZoom = CGFloat(truncating: captureDevice.virtualDeviceSwitchOverVideoZoomFactors.first ?? minScale as NSNumber)
 

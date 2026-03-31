@@ -48,21 +48,7 @@ public struct CameraSelectionView: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .overlay(alignment: .topTrailing) {
-            if selectionParamsHolder.selectionLimit != 1, let index {
-                SelectionIndicatorView(
-                    index: cameraSelectionService.selectedIndex(fromAddedIndex: index),
-                    isFullscreen: true,
-                    canSelect: true,
-                    selectionParamsHolder: selectionParamsHolder
-                )
-                .padding(12)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    cameraSelectionService.onSelect(index: index)
-                }
-            }
-        }
+
     }
 }
 

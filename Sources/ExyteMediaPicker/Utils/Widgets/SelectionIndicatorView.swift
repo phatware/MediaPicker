@@ -24,15 +24,8 @@ struct SelectionIndicatorView: View {
     var selectedCheckmark: Color { isFullscreen ? theme.selection.fullscreenSelectedCheckmark : theme.selection.cellSelectedCheckmark }
 
     var body: some View {
-        Group {
-            switch selectionParamsHolder.selectionStyle {
-            case .checkmark:
-                checkView
-            case .count:
-                countView
-            }
-        }
-        .frame(width: size, height: size)
+        Color.clear
+            .frame(width: size, height: size)
     }
 
     @ViewBuilder
