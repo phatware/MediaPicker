@@ -17,8 +17,8 @@ final class AlbumMediasProvider: BaseMediasProvider {
 
     override func reload() {
         PermissionsService.shared.requestPhotoLibraryPermission {
-            DispatchQueue.main.async { [weak self] in
-                self?.reloadInternal()
+            DispatchQueue.main.async { [self = self] in
+                self.reloadInternal()
             }
         }
     }
