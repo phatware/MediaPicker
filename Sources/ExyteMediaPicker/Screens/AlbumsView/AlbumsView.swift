@@ -22,6 +22,7 @@ struct AlbumsView: View {
     let massFilterClosure: MediaPicker.MassFilterClosure?
 
     @State private var showingLoadingCell = false
+    @State private var containerWidth: CGFloat = 0
     
     private var cellPadding: EdgeInsets {
         EdgeInsets(top: 2, leading: 2, bottom: 8, trailing: 2)
@@ -39,8 +40,8 @@ struct AlbumsView: View {
                     Text("Empty data")
                         .font(.title3)
                         .foregroundColor(theme.main.pickerText)
-                } else {
-                    let (columnWidth, columns) = calculateColumnWidth(spacing: 0)
+                } else if containerWidth > 0 {
+                    let (columnWidth, columns) = calculateColumnWidth(containerWidth: containerWidth, spacing: 0)
                     LazyVGrid(columns: columns, spacing: 0) {
                         ForEach(viewModel.albums) { album in
                             AlbumCell(viewModel: AlbumCellViewModel(album: album), size: columnWidth)
@@ -53,6 +54,8 @@ struct AlbumsView: View {
                 }
                 Spacer()
             }
+            .frame(maxWidth: .infinity)
+            .widthReader($containerWidth)
         }
         .onAppear {
             viewModel.onStart()

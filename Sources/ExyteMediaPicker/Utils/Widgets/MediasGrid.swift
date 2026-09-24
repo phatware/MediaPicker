@@ -16,6 +16,8 @@ where Element: Identifiable, Camera: View, Content: View, LoadingCell: View {
 
     @Environment(\.mediaPickerTheme) private var theme
 
+    @State private var containerWidth: CGFloat = 0
+
     public init(_ data: [Element],
                 liveCameraCell: LiveCameraCellStyle,
                 @ViewBuilder camera: @escaping () -> Camera,
@@ -29,7 +31,22 @@ where Element: Identifiable, Camera: View, Content: View, LoadingCell: View {
     }
 
     public var body: some View {
+        Group {
+            if containerWidth > 0 {
+                grid
+            } else {
+                // Placeholder until the width is measured, one layout pass later.
+                Color.clear.frame(height: 1)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .widthReader($containerWidth)
+    }
+
+    @ViewBuilder
+    private var grid: some View {
         let (columnWidth, columns) = calculateColumnWidth(
+            containerWidth: containerWidth,
             spacing: theme.cellStyle.columnsSpacing
         )
         let spacing = theme.cellStyle.rowSpacing

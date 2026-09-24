@@ -226,14 +226,10 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
     }
 
     var defaultHeaderView: some View {
-        HStack {
-            Button("Cancel") {
-                selectionService.removeAll()
-                cameraSelectionService.removeAll()
-                isPresented = false
-            }
-
-            Spacer()
+        // Cancel and Done sit on the trailing edge, and the row makes room for
+        // the window controls that cover the top-leading corner of an iPadOS window.
+        HStack(spacing: 8) {
+            Spacer(minLength: 0)
 
             Picker("", selection:
                     Binding(
@@ -249,9 +245,18 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
                     .tag(1)
             }
             .pickerStyle(SegmentedPickerStyle())
-            .frame(maxWidth: UIScreen.main.bounds.width / 2)
+            .fixedSize()
+            .foregroundColor(theme.main.pickerText)
 
-            Spacer()
+            Spacer(minLength: 0)
+
+            Button("Cancel") {
+                selectionService.removeAll()
+                cameraSelectionService.removeAll()
+                isPresented = false
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.accentColor)
 
             Button("Done") {
                 if selectionService.selected.isEmpty, let current = currentFullscreenMedia {
@@ -259,8 +264,10 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
                 }
                 isPresented = false
             }
+            .buttonStyle(.borderedProminent)
+            .tint(.accentColor)
         }
-        .foregroundColor(theme.main.pickerText)
+        .modifier(WindowControlsInset())
         .padding(12)
         .background(theme.defaultHeader.background)
     }
@@ -399,5 +406,18 @@ public extension MediaPicker {
         var mediaPicker = self
         mediaPicker.pickerMode = mode
         return mediaPicker
+    }
+}
+
+/// Shifts a top-leading header row clear of the iPadOS window controls.
+/// Those corner controls arrived with iPadOS 26's windowing, the same release
+/// as `containerCornerOffset`, so earlier systems need no adjustment.
+private struct WindowControlsInset: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.containerCornerOffset(.leading, sizeToFit: true)
+        } else {
+            content
+        }
     }
 }
