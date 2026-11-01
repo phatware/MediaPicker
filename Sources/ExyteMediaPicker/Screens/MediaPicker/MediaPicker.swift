@@ -121,7 +121,10 @@ public struct MediaPicker<AlbumSelectionContent: View, CameraSelectionContent: V
             cameraSelectionService.onChange = onChange
             cameraSelectionService.mediaSelectionLimit = selectionParamsHolder.selectionLimit
 
-            viewModel.shouldUpdatePickerMode = { mode in
+            // The binding, not this view: a closure capturing the view, kept
+            // by the view model this view owns as a @StateObject, kept the
+            // picker (and the host's onChange closure) alive after it closed.
+            viewModel.shouldUpdatePickerMode = { [pickerMode] mode in
                 pickerMode?.wrappedValue = mode
             }
             viewModel.onStart()
